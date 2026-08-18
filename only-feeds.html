@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ONLY FEEDS</title>
+  <style>
+    :root {
+      --bg: #F5F5F5;
+      --card-bg: #ffffff;
+      --card-read-bg: #F8F8F8;
+      --text-main: #222222;
+      --text-muted: #555555;
+      --text-dim: #888888;
+      --border: #EAEAEA;
+      --border-hover: #D0D0D0;
+      --tag-bg: #52525b;
+      --tag-text: #ffffff;
+      --topbar-bg: rgba(245, 245, 245, 0.65);
+      --topbar-border: rgba(0, 0, 0, 0.04);
+      --modal-overlay: rgba(0, 0, 0, 0.35);
+      --modal-bg: rgba(245, 245, 245, 0.78);
+      --modal-border: rgba(0, 0, 0, 0.08);
+      --subcard-bg: rgba(255, 255, 255, 0.65);
+      --subcard-border: rgba(0, 0, 0, 0.06);
+      --btn-secondary-bg: rgba(255, 255, 255, 0.6);
+      --btn-secondary-hover: rgba(255, 255, 255, 0.95);
+      --btn-secondary-text: #444444;
+      --btn-primary-bg: #2D2D2D;
+      --btn-primary-hover: #000000;
+      --btn-primary-text: #ffffff;
+      --input-bg: #ffffff;
+      --svg-fill: #18181b;
+      --icon-btn-bg: #F0F0F0;
+      --icon-btn-text: #666666;
+      --action-hover-bg: rgba(0, 0, 0, 0.05);
+      --plus-color: #16a34a;
+    }
+
+    [data-theme="dark"] {
+      --bg: #121214;
+      --card-bg: #1c1c1f;
+      --card-read-bg: #151517;
+      --text-main: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+      --border: #2a2a2e;
+      --border-hover: #404046;
+      --tag-bg: #27272a;
+      --tag-text: #f4f4f5;
+      --topbar-bg: rgba(18, 18, 20, 0.72);
+      --topbar-border: rgba(255, 255, 255, 0.06);
+      --modal-overlay: rgba(0, 0, 0, 0.6);
+      --modal-bg: rgba(24, 24, 27, 0.8);
+      --modal-border: rgba(255, 255, 255, 0.1);
+      --subcard-bg: rgba(32, 32, 36, 0.65);
+      --subcard-border: rgba(255, 255, 255, 0.08);
+      --btn-secondary-bg: rgba(36, 36, 40, 0.7);
+      --btn-secondary-hover: rgba(50, 50, 56, 0.9);
+      --btn-secondary-text: #d4d4d8;
+      --btn-primary-bg: #f4f4f5;
+      --btn-primary-hover: #ffffff;
+      --btn-primary-text: #18181b;
+      --input-bg: #18181b;
+      --svg-fill: #f4f4f5;
+      --icon-btn-bg: #2a2a2e;
+      --icon-btn-text: #a1a1aa;
+      --action-hover-bg: rgba(255, 255, 255, 0.08);
+      --plus-color: #22c55e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Helvetica Neue", Helvetica, Arial, -apple-system, sans-serif !important;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-top: 50px;
+      padding-bottom: 32px;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    /* Fixed top bar with frosted glass */
+    #top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--topbar-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--topbar-border);
+      z-index: 50;
+      padding: 0 16px;
+    }
+
+    #brand-title-btn {
+      background: transparent;
+      border: none;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-main);
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      transition: opacity 0.15s ease;
+    }
+    #brand-title-btn:hover {
+      opacity: 0.75;
+    }
+
+    /* Masonry Layout */
+    #feed-list {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 6px 12px 60px 12px;
+      column-count: 1;
+      column-gap: 10px;
+    }
+    @media (min-width: 640px) {
+      #feed-list {
+        column-count: 2;
+        padding: 10px 20px 60px 20px;
+      }
+    }
+    @media (min-width: 1024px) {
+      #feed-list {
+        column-count: 3;
+        column-gap: 10px;
+      }
+    }
+
+    /* Cards */
+    .news-card {
+      break-inside: avoid;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px 14px 14px;
+      margin-bottom: 10px;
+      transition: border-color 0.15s ease, opacity 0.2s ease, transform 0.15s ease, background-color 0.2s ease;
+      position: relative;
+    }
+    .news-card:hover {
+      border-color: var(--border-hover);
+    }
+    .news-card.read {
+      opacity: 0.38;
+      background: var(--card-read-bg);
+    }
+    .news-card.read:hover {
+      opacity: 0.75;
+    }
+
+    .meta-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 7px;
+    }
+    .meta-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+      flex: 1;
+    }
+    .card-time {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-dim);
+      white-space: nowrap;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    @media (min-width: 640px) {
+      .card-time {
+        font-size: 10px;
+      }
+    }
+    .card-tag {
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      padding: 2px 7px;
+      border-radius: 9999px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      flex-shrink: 1;
+      line-height: 1.2;
+    }
+    @media (min-width: 640px) {
+      .card-tag {
+        font-size: 8.5px;
+      }
+    }
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .icon-action-btn {
+      background: var(--icon-btn-bg);
+      border: none;
+      color: var(--icon-btn-text);
+      cursor: pointer;
+      width: 22px;
+      height: 22px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.12s, color 0.12s;
+    }
+    .icon-action-btn:hover {
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-text);
+    }
+
+    /* Checkmark button visibility: hidden on mobile portrait, visible on desktop / landscape */
+    .icon-action-btn.check-btn {
+      display: none;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    @media (min-width: 640px) {
+      .icon-action-btn.check-btn {
+        display: inline-flex;
+      }
+    }
+    @media (orientation: landscape) {
+      .icon-action-btn.check-btn {
+        display: inline-flex;
+      }
+    }
+
+    .icon-action-btn svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .card-title {
+      font-size: 16.5px;
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--text-main);
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+    @media (min-width: 640px) {
+      .card-title {
+        font-size: 13px;
+      }
+    }
+    .news-card:not(.read) .card-title {
+      margin-bottom: 5px;
+    }
+    .news-card.read .card-title {
+      color: var(--text-muted);
+    }
+
+    .card-snippet {
+      font-size: 14.5px;
+      line-height: 1.45;
+      color: var(--text-muted);
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+    @media (min-width: 640px) {
+      .card-snippet {
+        font-size: 12px;
+      }
+    }
+
+    /* Modal / Source Manager */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--modal-overlay);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-box {
+      background: var(--modal-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--modal-border);
+      border-radius: 24px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.16);
+      overflow: hidden;
+      color: var(--text-main);
+    }
+    .modal-header {
+      padding: 16px 20px 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .modal-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .header-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-dim);
+      font-size: 16px;
+      line-height: 1;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.12s, color 0.12s;
+    }
+    .header-btn:hover {
+      color: var(--text-main);
+      background: var(--action-hover-bg);
+    }
+
+    .modal-content {
+      padding: 8px 20px 20px 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Info Modal Box */
+    .info-modal-box {
+      background: var(--modal-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--modal-border);
+      border-radius: 24px;
+      max-width: 380px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.16);
+      overflow: hidden;
+      color: var(--text-main);
+      text-align: center;
+    }
+    .info-modal-header {
+      padding: 14px 18px 0 18px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .info-modal-content {
+      padding: 10px 24px 28px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      user-select: none;
+    }
+    .info-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .info-year {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+    .info-link {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      margin-bottom: 24px;
+      cursor: pointer;
+    }
+    .info-link:hover {
+      color: var(--text-main);
+    }
+    .info-ghost-logo {
+      cursor: pointer;
+      padding: 12px;
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Reset Confirm Box */
+    .reset-confirm-box {
+      display: none;
+      padding: 14px;
+      background: var(--subcard-bg);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 16px;
+      text-align: center;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .reset-confirm-box.active {
+      display: flex;
+    }
+    .reset-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #ef4444;
+    }
+    .reset-desc {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .reset-btn-row {
+      display: flex;
+      gap: 8px;
+    }
+    .reset-cancel-btn {
+      flex: 1;
+      min-height: 40px;
+      background: var(--btn-secondary-bg);
+      color: var(--text-main);
+      border: 1px solid var(--subcard-border);
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .reset-confirm-btn {
+      flex: 1;
+      min-height: 40px;
+      background: #ef4444;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    /* Input & Add Button Grouped - exact same height & width */
+    .input-group-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px;
+      background: var(--subcard-bg);
+      border: 1px solid var(--subcard-border);
+      border-radius: 18px;
+    }
+    .source-input-field {
+      width: 100%;
+      height: 44px;
+      min-height: 44px;
+      padding: 10px 14px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 12px;
+      color: var(--text-main);
+      outline: none;
+      text-align: center;
+      transition: border-color 0.15s;
+    }
+    .source-input-field:focus {
+      border-color: var(--text-dim);
+    }
+    .btn-add-sources {
+      width: 100%;
+      height: 44px;
+      min-height: 44px;
+      padding: 10px 14px;
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-text);
+      border: none;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-add-sources:hover {
+      background: var(--btn-primary-hover);
+    }
+    .btn-add-sources:active {
+      transform: scale(0.99);
+    }
+
+    /* Accordion Section */
+    .accordion-item {
+      border: 1px solid var(--subcard-border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--subcard-bg);
+    }
+    .accordion-header {
+      width: 100%;
+      min-height: 44px;
+      padding: 12px 16px;
+      background: transparent;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--btn-secondary-text);
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+    }
+    .accordion-header:hover {
+      background: var(--action-hover-bg);
+      color: var(--text-main);
+    }
+    .accordion-body {
+      display: none;
+      padding: 10px;
+      border-top: 1px solid var(--subcard-border);
+    }
+    .accordion-item.open .accordion-body {
+      display: block;
+    }
+
+    /* Presets Grid */
+    .presets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .preset-card-btn {
+      padding: 10px 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-main);
+      transition: all 0.12s;
+    }
+    .preset-card-btn:hover {
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-text);
+      border-color: var(--btn-primary-bg);
+    }
+    .preset-card-btn:hover .preset-feed-count {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .preset-card-btn.preset-selected {
+      opacity: 0.35;
+      cursor: default;
+      pointer-events: none;
+      background: rgba(0, 0, 0, 0.02);
+      border-color: var(--subcard-border);
+    }
+    [data-theme="dark"] .preset-card-btn.preset-selected {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: var(--subcard-border);
+    }
+    .preset-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+    .preset-title {
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .preset-feed-count {
+      font-size: 10.5px;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    /* Pixel-perfect centered SVG plus icon container */
+    .preset-plus-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      margin: auto 0;
+    }
+    .preset-plus-svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--plus-color);
+      display: block;
+    }
+
+    /* Sources List */
+    .sources-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .source-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 11px;
+    }
+    .source-item-url {
+      max-width: 76%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text-muted);
+    }
+    .delete-btn {
+      background: transparent;
+      color: #ef4444;
+      border: none;
+      padding: 4px 6px;
+      cursor: pointer;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-radius: 4px;
+      transition: color 0.12s;
+    }
+    .delete-btn:hover {
+      color: #dc2626;
+    }
+
+    /* Loader Ghost Jitter Animation */
+    @keyframes gentle-jitter {
+      0%, 100% {
+        transform: translate(0px, 0px) rotate(0deg);
+      }
+      20% {
+        transform: translate(-1.2px, 0.8px) rotate(-1.2deg);
+      }
+      40% {
+        transform: translate(1px, -1px) rotate(1deg);
+      }
+      60% {
+        transform: translate(-0.8px, -0.6px) rotate(-0.8deg);
+      }
+      80% {
+        transform: translate(1.2px, 0.6px) rotate(1.2deg);
+      }
+    }
+
+    .loader-container {
+      width: 100%;
+      column-span: all;
+      -webkit-column-span: all;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 90px 0;
+      text-align: center;
+    }
+    .ghost-jitter {
+      animation: gentle-jitter 0.22s infinite ease-in-out;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .ghost-svg {
+      fill: var(--svg-fill);
+      transition: fill 0.2s ease;
+    }
+    .loader-text {
+      margin-top: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- Fixed Top Header -->
+  <header id="top-bar">
+    <button id="brand-title-btn" onclick="openModal()">ONLY FEEDS</button>
+  </header>
+
+  <!-- Feed Cards Masonry Layout -->
+  <main id="feed-list"></main>
+
+  <!-- Source Management Modal -->
+  <div id="modal-overlay" class="modal-overlay" onclick="onBackdropClick(event)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">SOURCES</div>
+        <div class="modal-header-actions">
+          <!-- 1. Reset Button -->
+          <button class="header-btn" title="RESET" onclick="toggleResetConfirm()" aria-label="Reset all settings">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+          </button>
+
+          <!-- 2. Info / Question Mark Button -->
+          <button class="header-btn" title="INFO" onclick="openInfoModal()" aria-label="Show information">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </button>
+
+          <!-- 3. Theme Toggle Button -->
+          <button id="theme-toggle-btn" class="header-btn" title="THEME" onclick="toggleTheme()" aria-label="Toggle light and dark theme">
+            <svg id="theme-icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+            <svg id="theme-icon-sun" style="display:none;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+          </button>
+
+          <!-- 4. Export Standalone Button -->
+          <button class="header-btn" title="EXPORT HTML" onclick="downloadStandalone()" aria-label="Download standalone HTML">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </button>
+
+          <!-- 5. Close Button -->
+          <button class="header-btn" onclick="closeModal()" title="CLOSE" aria-label="Close">✕</button>
+        </div>
+      </div>
+
+      <div class="modal-content">
+        <!-- Reset Confirmation Box -->
+        <div id="reset-confirm-box" class="reset-confirm-box">
+          <div class="reset-title">RESET ALL SETTINGS?</div>
+          <div class="reset-desc">This will delete all saved feeds, clear read history, and reset settings to a completely clean state.</div>
+          <div class="reset-btn-row">
+            <button class="reset-cancel-btn" onclick="toggleResetConfirm(false)">CANCEL</button>
+            <button class="reset-confirm-btn" onclick="confirmResetAll()">CONFIRM</button>
+          </div>
+        </div>
+
+        <!-- Input & Add Button Grouped - exact same height & width -->
+        <div class="input-group-wrapper">
+          <input id="source-input" type="text" class="source-input-field" placeholder="feed.com/rss; news.de/feed; ...">
+          <button class="btn-add-sources" onclick="handleAddSources()">ADD</button>
+        </div>
+
+        <!-- Accordion Item 1: Presets -->
+        <div id="accordion-presets" class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion('presets')">
+            <span>PRESETS</span>
+          </button>
+          <div class="accordion-body">
+            <div id="presets-container" class="presets-container"></div>
+          </div>
+        </div>
+
+        <!-- Accordion Item 2: Edit Sources -->
+        <div id="accordion-edit" class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion('edit')">
+            <span id="sources-header-title">EDIT SOURCES</span>
+          </button>
+          <div class="accordion-body">
+            <div id="sources-list" class="sources-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Modal -->
+  <div id="info-modal-overlay" class="modal-overlay" onclick="onInfoBackdropClick(event)">
+    <div class="info-modal-box">
+      <div class="info-modal-header">
+        <button class="header-btn" onclick="closeInfoModal()" title="CLOSE" aria-label="Close">✕</button>
+      </div>
+      <div class="info-modal-content">
+        <div class="info-title">GEIST RSS ONLY FEEDS</div>
+        <div class="info-year">2026</div>
+        <a href="https://github.com/klopfgeist" target="_blank" rel="noopener noreferrer" class="info-link">github.com/klopfgeist</a>
+        <div id="info-ghost-logo" class="info-ghost-logo" onclick="triggerInfoJitter()">
+          <svg class="ghost-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48">
+            <path d="M12 1.25C6.04 1.25 1.25 6.22 1.25 12.3v7.42c0 1.85 1.91 3.12 3.59 2.26.68-.35 1.49-.3 2.13.14 1.23.84 2.83.84 4.06.14l.35-.24c.38-.26.86-.26 1.24 0l.35.24c1.23.84 2.83.84 4.06.14.64-.44 1.45-.48 2.13-.14 1.68.86 3.59-.41 3.59-2.26v-7.42C22.75 6.22 17.96 1.25 12 1.25zm9.25 18.47c0 .8-.79 1.24-1.41.92-1.17-.61-2.57-.51-3.66.23-.72.49-1.64.49-2.36.23l-.35-.24c-.89-.61-2.05-.61-2.94 0l-.35.24c-.72.49-1.64.49-2.36.23-1.09-.74-2.49-.64-3.66-.23-.62.32-1.41-.13-1.41-.92v-7.42c0-5.3 4.16-9.55 9.25-9.55s9.25 4.25 9.25 9.55v7.42z"/>
+            <circle cx="8.5" cy="9.5" r="1.25"/>
+            <circle cx="15.5" cy="9.5" r="1.25"/>
+            <path transform="translate(6 3.5) scale(.5)" d="M9.45 14.4c-.34-.25-.81-.18-1.06.15-.25.33-.18.8.15 1.05.97.72 2.16 1.15 3.45 1.15 1.29 0 2.47-.43 3.45-1.15.33-.25.4-.72.15-1.05-.25-.33-.72-.4-1.05-.15-.73.54-1.61.85-2.55.85-.95 0-1.83-.31-2.55-.85l-.04-.05z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const PRESET_FEEDS = {
+      "news (at)": [
+        "https://rss.orf.at/news.xml",
+        "https://rss.orf.at/oesterreich.xml",
+        "https://rss.orf.at/wien.xml",
+        "https://rss.orf.at/niederoesterreich.xml",
+        "https://rss.orf.at/burgenland.xml",
+        "https://rss.orf.at/steiermark.xml",
+        "https://rss.orf.at/kaernten.xml",
+        "https://rss.orf.at/oberoesterreich.xml",
+        "https://rss.orf.at/salzburg.xml",
+        "https://rss.orf.at/tirol.xml",
+        "https://rss.orf.at/vorarlberg.xml",
+        "https://www.derstandard.at/rss",
+        "https://www.derstandard.at/rss/inland",
+        "https://www.diepresse.com/rss/Home",
+        "https://www.diepresse.com/rss/Innenpolitik",
+        "https://kurier.at/xml/rss",
+        "https://www.kleinezeitung.at/rss",
+        "https://www.sn.at/xml/rss",
+        "https://www.nachrichten.at/rss/rss.xml",
+        "https://www.tt.com/rss",
+        "https://www.vol.at/feed",
+        "https://www.vienna.at/feed",
+        "https://www.meinbezirk.at/rss",
+        "https://www.puls24.at/rss",
+        "https://www.profil.at/rss",
+        "https://www.falter.at/rss",
+        "https://www.krone.at/rss",
+        "https://www.heute.at/rss",
+        "https://www.salzburg24.at/rss",
+        "https://www.wien.gv.at/rk/rss/rk.xml"
+      ],
+      "news (dach)": [
+        "https://www.tagesschau.de/xml/rss2/",
+        "https://www.zdf.de/rss/zdf/nachrichten",
+        "https://rss.sueddeutsche.de/rss/Topthemen",
+        "https://rss.sueddeutsche.de/rss/Politik",
+        "https://www.faz.net/rss/aktuell/",
+        "https://www.faz.net/rss/aktuell/politik/",
+        "https://www.welt.de/feeds/topnews.rss",
+        "https://www.n-tv.de/rss",
+        "https://newsfeed.zeit.de/index",
+        "https://newsfeed.zeit.de/politik/index",
+        "https://www.stern.de/feed/standard/alle-nachrichten/",
+        "https://www.spiegel.de/schlagzeilen/tops/index.rss",
+        "https://www.spiegel.de/politik/index.rss",
+        "https://rss.focus.de/fol/XML/rss_folnews.xml",
+        "https://www.nzz.ch/recent.rss",
+        "https://www.nzz.ch/international.rss",
+        "https://www.blick.ch/news/rss.xml",
+        "https://www.srf.ch/news/bnf/rss/1890",
+        "https://www.tagesanzeiger.ch/rss.html",
+        "https://www.ndr.de/nachrichten/index-rss.xml",
+        "https://www.wdr.de/wissen/rss/",
+        "https://www.br.de/nachrichten/rss/aktuelles",
+        "https://www.mdr.de/nachrichten/index-rss.xml",
+        "https://www.rnd.de/arc/outboundfeeds/rss/",
+        "https://taz.de/!p4608;rss/",
+        "https://www.fr.de/rss",
+        "https://www.tagesspiegel.de/contentexport/feed/home",
+        "https://www.wiwo.de/contentexport/feed/rss/frontpage",
+        "https://www.handelsblatt.com/contentexport/feed/top-themen"
+      ],
+      "news (international)": [
+        "http://feeds.bbci.co.uk/news/world/rss.xml",
+        "http://rss.cnn.com/rss/edition_world.rss",
+        "https://www.theguardian.com/world/rss",
+        "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+        "https://feeds.washingtonpost.com/rss/world",
+        "https://www.aljazeera.com/xml/rss/all.xml",
+        "https://rss.dw.com/rdf/rss-en-world",
+        "https://www.france24.com/en/rss",
+        "https://feeds.npr.org/1001/rss.xml",
+        "https://abcnews.go.com/abcnews/internationalheadlines",
+        "https://www.cbsnews.com/rss/tok/world/",
+        "https://feeds.nbcnews.com/nbcnews/public/world",
+        "https://www.euronews.com/rss?level=theme&name=news",
+        "https://time.com/feed/",
+        "https://www.politico.com/rss/politicopicks.xml",
+        "https://foreignpolicy.com/feed/",
+        "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+        "https://www.independent.co.uk/news/world/rss",
+        "https://www.cbc.ca/rss/1.1278264",
+        "https://www.abc.net.au/news/feed/51120/rss.xml",
+        "https://www.scmp.com/rss/91/feed",
+        "https://english.kyodonews.net/rss/news.xml",
+        "https://timesofindia.indiatimes.com/rssfeeds/296589292.cms",
+        "https://www.reutersagency.com/feed/?best-topics=world-news"
+      ],
+      "tech news (dach)": [
+        "https://www.heise.de/rss/heise-atom.xml",
+        "https://www.golem.de/rss.php?feed=ATOM1.0",
+        "https://www.computerbase.de/rss/news.xml",
+        "https://winfuture.de/rss/news.rss",
+        "https://t3n.de/rss.xml",
+        "https://netzpolitik.org/feed/",
+        "https://www.heise.de/developer/rss/news-atom.xml",
+        "https://www.inside-digital.de/feed",
+        "https://stadt-bremerhaven.de/feed/",
+        "https://curved.de/feed",
+        "https://www.notebookcheck.com/News-Feed.104033.0.rss",
+        "https://www.deskmodder.de/blog/feed/",
+        "https://www.pcgameshardware.de/feed.cfm",
+        "https://www.chip.de/rss/chip_home.xml",
+        "https://www.computerbild.de/rssfeed_2297.xml",
+        "https://futurezone.at/feed",
+        "https://www.derstandard.at/rss/web",
+        "https://rss.orf.at/futurezone.xml"
+      ],
+      "tech news (international)": [
+        "https://techcrunch.com/feed/",
+        "https://www.theverge.com/rss/index.xml",
+        "https://arstechnica.com/feed/",
+        "https://www.engadget.com/rss.xml",
+        "https://www.wired.com/feed/rss",
+        "https://mashable.com/feeds/rss/all",
+        "https://gizmodo.com/rss",
+        "https://www.techradar.com/rss",
+        "https://www.tomshardware.com/feeds/all",
+        "https://9to5mac.com/feed/",
+        "https://9to5google.com/feed/",
+        "https://www.androidauthority.com/feed/",
+        "https://www.digitaltrends.com/feed/",
+        "https://venturebeat.com/feed/",
+        "https://www.zdnet.com/news/rss.xml",
+        "https://www.cnet.com/rss/news/",
+        "https://slashdot.org/slashdot.rss",
+        "https://news.ycombinator.com/rss"
+      ],
+      "science (international)": [
+        "https://www.nature.com/nature.rss",
+        "https://www.science.org/rss/news_current.xml",
+        "https://www.scientificamerican.com/rss/",
+        "https://www.newscientist.com/feed/home/",
+        "https://phys.org/rss-feed/",
+        "https://www.livescience.com/feeds/all",
+        "https://www.sciencedaily.com/rss/all.xml",
+        "https://www.popsci.com/feed/",
+        "https://www.eurekalert.org/rss/technology.xml",
+        "https://www.sciencenews.org/feed",
+        "https://phys.org/rss-feed/biology-news/",
+        "https://phys.org/rss-feed/chemistry-news/",
+        "https://phys.org/rss-feed/physics-news/",
+        "https://phys.org/rss-feed/earth-news/",
+        "https://www.quantamagazine.org/feed/",
+        "https://cosmosmagazine.com/feed/"
+      ],
+      "space (international)": [
+        "https://www.nasa.gov/rss/dyn/breaking_news.rss",
+        "https://www.space.com/feeds/all",
+        "https://spacenews.com/feed/",
+        "https://spaceflightnow.com/feed/",
+        "https://www.esa.int/rssfeed/Our_Activities/Space_News",
+        "https://universetoday.com/feed",
+        "https://skyandtelescope.org/feed/",
+        "https://astronomy.com/rss/news",
+        "https://www.nasaspaceflight.com/feed/",
+        "https://parabolicarc.com/feed/",
+        "https://phys.org/rss-feed/space-news/",
+        "https://www.planetary.org/rss",
+        "https://earthsky.org/feed/",
+        "https://spacepolicyonline.com/feed/",
+        "https://everydayastronaut.com/feed/",
+        "https://www.universetoday.com/feed/astronomy-news/"
+      ]
+    };
+
+    let proxyCounter = 0;
+    const CORS_PROXIES = [
+      url => 'https://corsproxy.io/?' + encodeURIComponent(url),
+      url => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
+      url => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url)
+    ];
+
+    const CACHE_STORAGE_KEY = 'only_feeds_cache_v1';
+    const CACHE_TTL_MS = 5 * 24 * 60 * 60 * 1000; // 5 days
+
+    function getFeedCache() {
+      try {
+        const raw = localStorage.getItem(CACHE_STORAGE_KEY);
+        if (!raw) return {};
+        const parsed = JSON.parse(raw);
+        const now = Date.now();
+        const clean = {};
+        for (const [url, data] of Object.entries(parsed)) {
+          if (data && data.cachedAt && now - data.cachedAt < CACHE_TTL_MS) {
+            clean[url] = data;
+          }
+        }
+        return clean;
+      } catch(e) {
+        return {};
+      }
+    }
+
+    function saveFeedCache(cache) {
+      try {
+        localStorage.setItem(CACHE_STORAGE_KEY, JSON.stringify(cache));
+      } catch(e) {
+        console.error(e);
+      }
+    }
+
+    let sources = [];
+    let readIds = new Set();
+    let allArticles = [];
+    let visibleCount = 50;
+    let infoJitterTimer = null;
+
+    try {
+      const savedSources = localStorage.getItem('only_feeds_sources');
+      if (savedSources) sources = JSON.parse(savedSources);
+      const savedRead = localStorage.getItem('only_feeds_read_ids');
+      if (savedRead) readIds = new Set(JSON.parse(savedRead));
+    } catch(e) {
+      console.error(e);
+    }
+
+    // Initialize Theme
+    function initTheme() {
+      try {
+        const savedTheme = localStorage.getItem('only_feeds_theme');
+        if (savedTheme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          updateThemeIcon('dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+          updateThemeIcon('light');
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try {
+        localStorage.setItem('only_feeds_theme', next);
+      } catch (e) {
+        console.error(e);
+      }
+      updateThemeIcon(next);
+    }
+
+    function updateThemeIcon(mode) {
+      const moon = document.getElementById('theme-icon-moon');
+      const sun = document.getElementById('theme-icon-sun');
+      if (!moon || !sun) return;
+      if (mode === 'dark') {
+        moon.style.display = 'none';
+        sun.style.display = 'block';
+      } else {
+        moon.style.display = 'block';
+        sun.style.display = 'none';
+      }
+    }
+
+    initTheme();
+
+    function saveSources() {
+      try {
+        localStorage.setItem('only_feeds_sources', JSON.stringify(sources));
+      } catch(e) {
+        console.error(e);
+      }
+    }
+
+    function saveReadState() {
+      try {
+        localStorage.setItem('only_feeds_read_ids', JSON.stringify(Array.from(readIds)));
+      } catch(e) {
+        console.error(e);
+      }
+    }
+
+    const modal = document.getElementById('modal-overlay');
+    const infoModal = document.getElementById('info-modal-overlay');
+    const sourceInput = document.getElementById('source-input');
+    const sourcesList = document.getElementById('sources-list');
+    const presetsContainer = document.getElementById('presets-container');
+    const feedList = document.getElementById('feed-list');
+    const resetConfirmBox = document.getElementById('reset-confirm-box');
+
+    function updateBodyScrollLock() {
+      const isAnyModalOpen = (modal && modal.classList.contains('active')) || (infoModal && infoModal.classList.contains('active'));
+      if (isAnyModalOpen) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    }
+
+    function openModal() {
+      if (!modal) return;
+      if (infoModal) infoModal.classList.remove('active');
+      modal.classList.add('active');
+      toggleResetConfirm(false);
+      renderPresets();
+      renderSourcesList();
+      if (sourceInput) sourceInput.value = '';
+      updateBodyScrollLock();
+    }
+
+    function closeModal() {
+      if (!modal) return;
+      modal.classList.remove('active');
+      toggleResetConfirm(false);
+      updateBodyScrollLock();
+    }
+
+    function openInfoModal() {
+      if (modal) modal.classList.remove('active');
+      if (!infoModal) return;
+      infoModal.classList.add('active');
+      updateBodyScrollLock();
+    }
+
+    function closeInfoModal() {
+      if (!infoModal) return;
+      infoModal.classList.remove('active');
+      if (infoJitterTimer) {
+        clearTimeout(infoJitterTimer);
+        infoJitterTimer = null;
+      }
+      const logo = document.getElementById('info-ghost-logo');
+      if (logo) logo.classList.remove('ghost-jitter');
+      updateBodyScrollLock();
+    }
+
+    function triggerInfoJitter() {
+      const logo = document.getElementById('info-ghost-logo');
+      if (!logo) return;
+      if (infoJitterTimer) clearTimeout(infoJitterTimer);
+      logo.classList.add('ghost-jitter');
+      infoJitterTimer = setTimeout(() => {
+        logo.classList.remove('ghost-jitter');
+        infoJitterTimer = null;
+      }, 2000);
+    }
+
+    function onBackdropClick(e) {
+      if (e.target === modal) {
+        closeModal();
+      }
+    }
+
+    function onInfoBackdropClick(e) {
+      if (e.target === infoModal) {
+        closeInfoModal();
+      }
+    }
+
+    function toggleResetConfirm(show) {
+      if (!resetConfirmBox) return;
+      if (typeof show === 'boolean') {
+        if (show) resetConfirmBox.classList.add('active');
+        else resetConfirmBox.classList.remove('active');
+      } else {
+        resetConfirmBox.classList.toggle('active');
+      }
+    }
+
+    function confirmResetAll() {
+      try {
+        localStorage.clear();
+      } catch (e) {
+        console.error(e);
+      }
+      sources = [];
+      readIds.clear();
+      allArticles = [];
+      visibleCount = 50;
+      document.documentElement.setAttribute('data-theme', 'light');
+      updateThemeIcon('light');
+      closeModal();
+      renderFeedList();
+    }
+
+    function toggleAccordion(name) {
+      const presetsAcc = document.getElementById('accordion-presets');
+      const editAcc = document.getElementById('accordion-edit');
+      if (name === 'presets') {
+        presetsAcc.classList.toggle('open');
+        editAcc.classList.remove('open');
+      } else if (name === 'edit') {
+        editAcc.classList.toggle('open');
+        presetsAcc.classList.remove('open');
+      }
+    }
+
+    function renderPresets() {
+      if (!presetsContainer) return;
+      presetsContainer.innerHTML = '';
+      const existingUrls = new Set(sources.map(s => s.toLowerCase()));
+      Object.entries(PRESET_FEEDS).forEach(([name, urls]) => {
+        const isSelected = urls.length > 0 && urls.every(u => existingUrls.has(u.toLowerCase()));
+        const btn = document.createElement('div');
+        btn.className = 'preset-card-btn' + (isSelected ? ' preset-selected' : '');
+        btn.innerHTML = `
+          <div class="preset-left">
+            <span class="preset-title">${name}</span>
+            <span class="preset-feed-count">(${urls.length} FEEDS)</span>
+          </div>
+          ${!isSelected ? `
+          <div class="preset-plus-wrapper">
+            <svg class="preset-plus-svg" viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </div>` : ''}
+        `;
+        if (!isSelected) {
+          btn.onclick = () => {
+            addRawInput(urls.join('; '));
+          };
+        }
+        presetsContainer.appendChild(btn);
+      });
+    }
+
+    function renderSourcesList() {
+      if (!sourcesList) return;
+      sourcesList.innerHTML = '';
+      const headerTitle = document.getElementById('sources-header-title');
+      if (headerTitle) {
+        headerTitle.textContent = `EDIT SOURCES (${sources.length})`;
+      }
+      if (sources.length === 0) {
+        sourcesList.innerHTML = '<div style="color:var(--text-dim); text-align:center; padding:12px; font-size:11px;">NO SAVED SOURCES</div>';
+        return;
+      }
+      sources.forEach((url, idx) => {
+        const item = document.createElement('div');
+        item.className = 'source-item';
+        item.innerHTML = `
+          <span class="source-item-url" title="${url}">${url}</span>
+          <button class="delete-btn" onclick="removeSource(${idx})">DELETE</button>
+        `;
+        sourcesList.appendChild(item);
+      });
+    }
+
+    function handleAddSources() {
+      if (!sourceInput) return;
+      const text = sourceInput.value.trim();
+      if (!text) return;
+      addRawInput(text);
+      sourceInput.value = '';
+    }
+
+    function addRawInput(rawText) {
+      const parts = rawText.split(';').map(s => s.trim()).filter(s => s.length > 5);
+      if (parts.length === 0) return;
+
+      const existing = new Set(sources.map(s => s.toLowerCase()));
+      let added = false;
+      parts.forEach(url => {
+        let finalUrl = url;
+        if (!/^https?:\/\//i.test(finalUrl)) {
+          finalUrl = 'https://' + finalUrl;
+        }
+        if (!existing.has(finalUrl.toLowerCase())) {
+          existing.add(finalUrl.toLowerCase());
+          sources.push(finalUrl);
+          added = true;
+        }
+      });
+
+      if (added) {
+        saveSources();
+        closeModal();
+        loadAllFeeds();
+      }
+    }
+
+    function removeSource(idx) {
+      sources.splice(idx, 1);
+      saveSources();
+      renderSourcesList();
+      loadAllFeeds();
+    }
+
+    function toggleRead(id, e) {
+      if (e) e.stopPropagation();
+      if (readIds.has(id)) {
+        readIds.delete(id);
+      } else {
+        readIds.add(id);
+      }
+      saveReadState();
+      renderFeedList();
+    }
+
+    function decodeHtml(html) {
+      const txt = document.createElement('textarea');
+      txt.innerHTML = html;
+      return txt.value;
+    }
+
+    function cleanBoilerplate(str) {
+      if (!str) return '';
+      return str
+        .replace(/^(Der Standard|ORF\.at|Spiegel Online|ZEIT ONLINE|FAZ|NZZ|Tagesschau|Bild|Welt|Focus|Stern|Heise|Golem|Curved|Golem\.de|t3n|Ars Technica|TechCrunch|The Verge):\s*/i, '')
+        .replace(/\s*[-|–—]\s*(Der Standard|ORF|Spiegel|ZEIT|FAZ|NZZ|Tagesschau|Bild|Welt|Focus|Stern|Heise|Golem|Curved|t3n|Ars Technica|TechCrunch|The Verge)$/i, '')
+        .trim();
+    }
+
+    function extractFullPlainText(html) {
+      if (!html) return '';
+      const tmp = document.createElement('div');
+      tmp.innerHTML = html;
+      const text = tmp.textContent || tmp.innerText || '';
+      return text.replace(/\s+/g, ' ').trim();
+    }
+
+    async function fetchXml(url) {
+      const startIdx = proxyCounter++;
+      const proxyList = [
+        CORS_PROXIES[startIdx % CORS_PROXIES.length],
+        CORS_PROXIES[(startIdx + 1) % CORS_PROXIES.length],
+        CORS_PROXIES[(startIdx + 2) % CORS_PROXIES.length]
+      ];
+
+      for (const proxyFn of proxyList) {
+        try {
+          const proxied = proxyFn(url);
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 4000);
+          const res = await fetch(proxied, { 
+            signal: controller.signal,
+            headers: { 'Accept': 'application/rss+xml, application/atom+xml, application/xml, text/xml, */*' }
+          });
+          clearTimeout(timeoutId);
+          if (res.ok) {
+            const text = await res.text();
+            if (text && (text.includes('<rss') || text.includes('<feed') || text.includes('<xml') || text.includes('<channel'))) {
+              return text;
+            }
+          }
+        } catch(e) {}
+      }
+      return null;
+    }
+
+    function parseFeed(xmlText, sourceUrl) {
+      if (!xmlText) return [];
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(xmlText, 'application/xml');
+      const parseError = doc.querySelector('parsererror');
+      if (parseError) return [];
+
+      const titleEl = doc.querySelector('channel > title, feed > title');
+      const feedTitle = titleEl ? decodeHtml(titleEl.textContent.trim()) : new URL(sourceUrl).hostname;
+      
+      const items = [];
+      const rssItems = doc.querySelectorAll('item');
+      if (rssItems.length > 0) {
+        rssItems.forEach(item => {
+          const rawTitle = item.querySelector('title')?.textContent?.trim() || 'Untitled';
+          const title = cleanBoilerplate(decodeHtml(rawTitle));
+          const link = item.querySelector('link')?.textContent?.trim() || '';
+          const pubDateStr = item.querySelector('pubDate, date')?.textContent?.trim() || '';
+          const pubDate = pubDateStr ? Date.parse(pubDateStr) || Date.now() : Date.now();
+          
+          let rawDesc = item.querySelector('description')?.textContent || '';
+          const encodedEl = item.getElementsByTagName('content:encoded')[0];
+          if (encodedEl && encodedEl.textContent) {
+            rawDesc = encodedEl.textContent;
+          }
+          const fullText = extractFullPlainText(rawDesc);
+          const id = link || (sourceUrl + '-' + title + '-' + pubDate);
+
+          items.push({ id, title, link, pubDate, fullText, sourceTitle: feedTitle });
+        });
+      } else {
+        doc.querySelectorAll('entry').forEach(entry => {
+          const rawTitle = entry.querySelector('title')?.textContent?.trim() || 'Untitled';
+          const title = cleanBoilerplate(decodeHtml(rawTitle));
+          const link = entry.querySelector('link')?.getAttribute('href') || '';
+          const updated = entry.querySelector('published, updated')?.textContent?.trim() || '';
+          const pubDate = updated ? Date.parse(updated) || Date.now() : Date.now();
+          
+          const rawDesc = entry.querySelector('content, summary')?.textContent || '';
+          const fullText = extractFullPlainText(rawDesc);
+          const id = link || (sourceUrl + '-' + title + '-' + pubDate);
+
+          items.push({ id, title, link, pubDate, fullText, sourceTitle: feedTitle });
+        });
+      }
+      return items;
+    }
+
+    function interleaveItems(lists) {
+      const copyLists = lists.map(l => [...l].sort((a, b) => b.pubDate - a.pubDate)).filter(l => l.length > 0);
+      const result = [];
+      let hasMore = true;
+      let round = 0;
+      while (hasMore) {
+        hasMore = false;
+        const indices = copyLists.map((_, i) => i).sort(() => (round % 2 === 0 ? 1 : -1));
+        for (const idx of indices) {
+          const queue = copyLists[idx];
+          if (queue && queue.length > 0) {
+            const item = queue.shift();
+            if (item) {
+              result.push(item);
+              hasMore = true;
+            }
+          }
+        }
+        round++;
+      }
+      const seen = new Set();
+      return result.filter(item => {
+        const key = item.link || item.id;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
+    async function loadAllFeeds() {
+      if (!feedList) return;
+      if (sources.length === 0) {
+        allArticles = [];
+        renderFeedList();
+        return;
+      }
+      
+      visibleCount = 50;
+
+      // 1. Instant Cache Load
+      const cache = getFeedCache();
+      const initialLists = [];
+      sources.forEach(url => {
+        const cached = cache[url.toLowerCase()] || cache[url];
+        if (cached && cached.items && cached.items.length > 0) {
+          initialLists.push(cached.items);
+        }
+      });
+
+      if (initialLists.length > 0) {
+        allArticles = interleaveItems(initialLists);
+        renderFeedList();
+      } else {
+        feedList.innerHTML = `
+          <div class="loader-container">
+            <div class="ghost-jitter">
+              <svg class="ghost-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="38" height="38">
+                <path d="M12 1.25C6.04 1.25 1.25 6.22 1.25 12.3v7.42c0 1.85 1.91 3.12 3.59 2.26.68-.35 1.49-.3 2.13.14 1.23.84 2.83.84 4.06.14l.35-.24c.38-.26.86-.26 1.24 0l.35.24c1.23.84 2.83.84 4.06.14.64-.44 1.45-.48 2.13-.14 1.68.86 3.59-.41 3.59-2.26v-7.42C22.75 6.22 17.96 1.25 12 1.25zm9.25 18.47c0 .8-.79 1.24-1.41.92-1.17-.61-2.57-.51-3.66.23-.72.49-1.64.49-2.36.23l-.35-.24c-.89-.61-2.05-.61-2.94 0l-.35.24c-.72.49-1.64.49-2.36.23-1.09-.74-2.49-.64-3.66-.23-.62.32-1.41-.13-1.41-.92v-7.42c0-5.3 4.16-9.55 9.25-9.55s9.25 4.25 9.25 9.55v7.42z"/>
+                <circle cx="8.5" cy="9.5" r="1.25"/>
+                <circle cx="15.5" cy="9.5" r="1.25"/>
+                <path transform="translate(6 3.5) scale(.5)" d="M9.45 14.4c-.34-.25-.81-.18-1.06.15-.25.33-.18.8.15 1.05.97.72 2.16 1.15 3.45 1.15 1.29 0 2.47-.43 3.45-1.15.33-.25.4-.72.15-1.05-.25-.33-.72-.4-1.05-.15-.73.54-1.61.85-2.55.85-.95 0-1.83-.31-2.55-.85l-.04-.05z"/>
+              </svg>
+              <div class="loader-text">PLEASE WAIT</div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 2. Fetch Feeds with Concurrency Queue (max 3 parallel requests)
+      const resultsMap = {};
+      sources.forEach(url => {
+        const cached = cache[url.toLowerCase()] || cache[url];
+        if (cached && cached.items) {
+          resultsMap[url] = cached.items;
+        }
+      });
+
+      const updatedCache = { ...cache };
+      const queue = [...sources];
+      const concurrency = 3;
+
+      const runWorker = async () => {
+        while (queue.length > 0) {
+          const url = queue.shift();
+          if (!url) break;
+          try {
+            const xml = await fetchXml(url);
+            const items = parseFeed(xml, url);
+            if (items.length > 0) {
+              resultsMap[url] = items;
+              updatedCache[url.toLowerCase()] = {
+                cachedAt: Date.now(),
+                feedTitle: items[0].sourceTitle || '',
+                items: items
+              };
+              saveFeedCache(updatedCache);
+
+              // Progressive update
+              const currentLists = Object.values(resultsMap).filter(l => l.length > 0);
+              if (currentLists.length > 0) {
+                allArticles = interleaveItems(currentLists);
+                renderFeedList();
+              }
+            }
+          } catch(e) {
+            console.error('Error loading', url, e);
+          }
+        }
+      };
+
+      const workers = Array.from({ length: Math.min(concurrency, sources.length) }, () => runWorker());
+      await Promise.all(workers);
+
+      // Final render & cleanup
+      const finalLists = Object.values(resultsMap).filter(l => l.length > 0);
+      if (finalLists.length > 0) {
+        allArticles = interleaveItems(finalLists);
+      }
+      renderFeedList();
+
+      if (allArticles.length > 0) {
+        const activeIds = new Set(allArticles.map(a => a.id));
+        const pruned = new Set();
+        readIds.forEach(id => {
+          if (activeIds.has(id)) pruned.add(id);
+        });
+        readIds = pruned;
+        saveReadState();
+      }
+    }
+
+    function renderFeedList() {
+      if (!feedList) return;
+      if (sources.length === 0 || allArticles.length === 0) {
+        feedList.innerHTML = '<div style="text-align:center; color:var(--text-dim); padding:80px 0; font-size:12px; column-span:all; -webkit-column-span:all; width:100%; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">No articles loaded. Tap ONLY FEEDS above.</div>';
+        return;
+      }
+
+      const displayList = allArticles.slice(0, visibleCount);
+      feedList.innerHTML = '';
+
+      displayList.forEach((article, idx) => {
+        const dateStr = new Date(article.pubDate).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+        const isRead = readIds.has(article.id);
+
+        const card = document.createElement('article');
+        card.className = 'news-card' + (isRead ? ' read' : '');
+        card.id = 'card-' + idx;
+
+        const metaLine = document.createElement('div');
+        metaLine.className = 'meta-line';
+
+        const metaLeft = document.createElement('div');
+        metaLeft.className = 'meta-left';
+
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'card-time';
+        timeSpan.textContent = dateStr;
+
+        const tagSpan = document.createElement('span');
+        tagSpan.className = 'card-tag';
+        tagSpan.textContent = article.sourceTitle;
+
+        metaLeft.appendChild(timeSpan);
+        metaLeft.appendChild(tagSpan);
+
+        const actions = document.createElement('div');
+        actions.className = 'card-actions';
+
+        const checkBtn = document.createElement('button');
+        checkBtn.className = 'icon-action-btn check-btn';
+        checkBtn.textContent = '✓';
+        checkBtn.title = isRead ? 'Mark as unread' : 'Mark as read';
+        checkBtn.addEventListener('click', (e) => toggleRead(article.id, e));
+        actions.appendChild(checkBtn);
+
+        if (article.link) {
+          const linkBtn = document.createElement('a');
+          linkBtn.href = article.link;
+          linkBtn.target = '_blank';
+          linkBtn.rel = 'noopener noreferrer';
+          linkBtn.className = 'icon-action-btn';
+          linkBtn.title = 'Open in browser';
+          linkBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+          linkBtn.addEventListener('click', () => markReadAuto(article.id));
+          actions.appendChild(linkBtn);
+        }
+
+        metaLine.appendChild(metaLeft);
+        metaLine.appendChild(actions);
+
+        const titleEl = document.createElement('h3');
+        titleEl.className = 'card-title';
+        titleEl.textContent = article.title;
+
+        card.appendChild(metaLine);
+        card.appendChild(titleEl);
+
+        // Content snippet ONLY if NOT read
+        if (!isRead && article.fullText) {
+          const snippetEl = document.createElement('p');
+          snippetEl.className = 'card-snippet';
+          snippetEl.textContent = article.fullText;
+          card.appendChild(snippetEl);
+        }
+
+        let startX = 0;
+        card.addEventListener('touchstart', (e) => {
+          startX = e.touches[0].clientX;
+        }, { passive: true });
+        card.addEventListener('touchend', (e) => {
+          const diff = e.changedTouches[0].clientX - startX;
+          if (Math.abs(diff) > 40) {
+            toggleRead(article.id);
+          }
+        }, { passive: true });
+
+        feedList.appendChild(card);
+      });
+    }
+
+    function markReadAuto(id) {
+      if (!readIds.has(id)) {
+        readIds.add(id);
+        saveReadState();
+        renderFeedList();
+      }
+    }
+
+    // Infinite Scroll Listener
+    window.addEventListener('scroll', () => {
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 500) {
+        if (visibleCount < allArticles.length) {
+          visibleCount += 50;
+          renderFeedList();
+        }
+      }
+    }, { passive: true });
+
+    function downloadStandalone() {
+      const htmlContent = document.documentElement.outerHTML;
+      const fullDoc = '<!DOCTYPE html>\n' + htmlContent;
+      const blob = new Blob([fullDoc], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'only-feeds.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Initial load
+    if (sources.length > 0) {
+      loadAllFeeds();
+    } else {
+      renderFeedList();
+    }
+  </script>
+</body>
+</html>
